@@ -1,34 +1,25 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { fetchCountries } from "@/api";
 
-export default function Home() {
-
-  const code = "KOR";
-  const router = useRouter();
-  
-  const onClickButton = () => {
-    router.push({
-      pathname : "country/[code]",
-      query : { code : code}
-    })
-  }
-
+export default function Home({ countries }) {
   return (
     <div>
-      Home Page
-      <div>
-        <button onClick={onClickButton}>Search Page로 이동</button>
-      </div>
-      <div>
-        <Link href={"/search"}>Search Page 이동</Link>
-      </div>
-      <div>
-        {/* <Link href={`/country/${code}`}>{code}페이지로 이동 </Link> */}
-        <Link href={{
-          pathname : "/country/[code]",
-          query : {code : code}
-        }}>{code} 페이지로 이동</Link>
-      </div>
+      {
+        countries.map((country) => <div key={country.code}>{country.commonName}</div>)
+      }
     </div>
-  );
+  )
 }
+
+export const getServerSideProps = async () => {
+  //SSR을 위해 서버측에서 컴포넌트에게 전달할 데이터를 설정하는 함수
+  // getServerSideProps 함수는 페이지 역할을 하는 Home 컴포넌트에게 데이터를 props 형태로 넘겨주기위한 역할을 하는 함수
+  // API 호출 코드가 필요함
+  const countries = await fetchCountries();
+  
+
+  return {
+    props: {
+      countries,
+    },
+  };
+};
