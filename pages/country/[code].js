@@ -6,6 +6,15 @@ export default function Country({ country }) {
   const router = useRouter();
   const { code } = router.query;
 
+  console.log(`${code} 페이지 생성`)
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
+  if (!country) {
+    return <div>존재하지 않는 국가입니다.</div>;
+  }
   return (
     <div>
       {country.commonName}
@@ -16,7 +25,14 @@ export default function Country({ country }) {
 
 Country.Layout = SubLayout;
 
-export const getServerSideProps = async (context) => {
+export const getStaticPaths = async () => {
+  return {
+    paths: [{ params: { code: "ABW" } }, { params: { code: "KOR" } }],
+    fallback: true,
+  };
+};
+
+export const getStaticProps = async (context) => {
   const { code } = context.params;
 
   let country = null;
@@ -28,5 +44,6 @@ export const getServerSideProps = async (context) => {
     props: {
       country,
     },
+    revalidate: 3,
   };
 };
