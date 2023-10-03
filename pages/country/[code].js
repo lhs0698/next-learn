@@ -9,8 +9,6 @@ export default function Country({ country }) {
   const router = useRouter();
   const { code } = router.query;
 
-  console.log(`${code} 페이지 생성`);
-
   if (router.isFallback) {
     return (
       <>
